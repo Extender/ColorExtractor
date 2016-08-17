@@ -103,7 +103,7 @@ void MainWindow::dialogFileSelected(QString path)
 
 void MainWindow::resetBtnClicked()
 {
-    if(originalImageData==0)
+    if(image==0||image->isNull())
         return;
 
     delete image;
