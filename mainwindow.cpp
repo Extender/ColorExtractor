@@ -103,6 +103,9 @@ void MainWindow::dialogFileSelected(QString path)
 
 void MainWindow::resetBtnClicked()
 {
+    if(originalImageData==0)
+        return;
+
     delete image;
     image=new QImage((uchar*)originalImageData,originalImageWidth,originalImageHeight,QImage::Format_ARGB32);
     scene->setSceneRect(0,0,image->width(),image->height());
@@ -113,6 +116,9 @@ void MainWindow::resetBtnClicked()
 
 void MainWindow::extractColorBtnClicked()
 {
+    if(image==0||image->isNull())
+        return;
+
     QString colorBoxText=ui->colorBox->text();
     if(colorBoxText.length()==0)
     {
@@ -156,6 +162,9 @@ void MainWindow::extractColorBtnClicked()
 
 void MainWindow::removeColorBtnClicked()
 {
+    if(image==0||image->isNull())
+        return;
+
     QString colorBoxText=ui->colorBox->text();
     if(colorBoxText.length()==0)
     {
