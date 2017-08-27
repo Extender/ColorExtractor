@@ -33,15 +33,17 @@ public:
     ~MainWindow();
 
     static uint32_t *qImageToBitmapData(QImage *image);
-    /*static*/ bool getColorFromHexString(const char *str, uint32_t &color);
+    static bool getColorFromHexString(const char *str, uint32_t &color);
 
 public slots:
     void browseBtnClicked();
     void loadBtnClicked();
     void fitToWindow();
     void resetZoom();
+    void saveAsBtnClicked();
     void dialogFileSelected(QString path);
     void resetBtnClicked();
+    void graphicsViewMouseDown(QMouseEvent *event);
     void extractColorBtnClicked();
     void removeColorBtnClicked();
 

@@ -22,8 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->fitToWindowBtn,SIGNAL(clicked(bool)),this,SLOT(fitToWindow()));
     connect(ui->resetZoomBtn,SIGNAL(clicked(bool)),this,SLOT(resetZoom()));
     connect(ui->resetBtn,SIGNAL(clicked(bool)),this,SLOT(resetBtnClicked()));
+    connect(ui->saveAsBtn,SIGNAL(clicked(bool)),this,SLOT(saveAsBtnClicked()));
     connect(ui->extractColorBtn,SIGNAL(clicked(bool)),this,SLOT(extractColorBtnClicked()));
     connect(ui->removeColorBtn,SIGNAL(clicked(bool)),this,SLOT(removeColorBtnClicked()));
+    connect(ui->graphicsView,SIGNAL(mouseDownEx(QMouseEvent*)),this,SLOT(graphicsViewMouseDown(QMouseEvent*)));
     image=0;
     originalImageData=0;
     originalImageWidth=-1;
@@ -96,9 +98,20 @@ void MainWindow::resetZoom()
     ui->graphicsView->setZoomFactor(1.0);
 }
 
+void MainWindow::saveAsBtnClicked()
+{
+    if(image==0||image->isNull())
+        return;
+    QString path=QFileDialog::getSaveFileName(this,"Save as...",QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),"PNG image (*.png);;JPG image (*.jpg);;GIF image (*.gif);;Bitmap (*.bmp)");
+    if(path=="")
+        return;
+    image->save(path,0,100);
+}
+
 void MainWindow::dialogFileSelected(QString path)
 {
     ui->pathBox->setText(path);
+    ui->loadBtn->click();
 }
 
 void MainWindow::resetBtnClicked()
@@ -112,6 +125,33 @@ void MainWindow::resetBtnClicked()
     pixmapItem->setPixmap(QPixmap::fromImage(*image));
     ui->graphicsView->viewport()->update();
     fitToWindow();
+}
+
+void MainWindow::graphicsViewMouseDown(QMouseEvent *event)
+{
+    QPointF scenePoint=ui->graphicsView->mapToScene(event->pos());
+    QColor c=image->pixelColor((int)scenePoint.x(),(int)scenePoint.y());
+    QString colorStr="";
+    int a=c.alpha();
+    int r=c.red();
+    int g=c.green();
+    int b=c.blue();
+    if(a<255)
+    {
+        if(a<16)
+            colorStr+="0";
+        colorStr+=QString::number(a,16);
+    }
+    if(r<16)
+        colorStr+="0";
+    colorStr+=QString::number(r,16);
+    if(g<16)
+        colorStr+="0";
+    colorStr+=QString::number(g,16);
+    if(b<16)
+        colorStr+="0";
+    colorStr+=QString::number(b,16);
+    ui->colorBox->setText(colorStr);
 }
 
 void MainWindow::extractColorBtnClicked()
